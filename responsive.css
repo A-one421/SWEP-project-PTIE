@@ -1,0 +1,116 @@
+/* Shared responsive styles for the school portal */
+
+/* Media safe defaults */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Improve touch targets */
+button, .btn, .menu-item, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Mobile off-canvas sidebar for dashboards */
+.menu-toggle-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--white, #ffffff);
+  color: var(--text-dark, #212529);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+@media (max-width: 992px) {
+  .menu-toggle-btn {
+    display: inline-flex;
+  }
+  .sidebar {
+    transform: translateX(-100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 260px !important;
+    background: var(--sidebar-bg, #e9ecef);
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+  }
+  body.sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+  /* When sidebar is open on mobile, show labels/icons fully */
+  body.sidebar-open .sidebar .school-name,
+  body.sidebar-open .sidebar .academic-term,
+  body.sidebar-open .sidebar .menu-title,
+  body.sidebar-open .sidebar .menu-item span,
+  body.sidebar-open .sidebar .menu-badge {
+    display: inline-block !important;
+  }
+  body.sidebar-open .sidebar .menu-item {
+    justify-content: flex-start;
+    padding: 14px 20px;
+  }
+  .sidebar-overlay {
+    display: none;
+  }
+  body.sidebar-open .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+  }
+  .main-content {
+    margin-left: 0 !important;
+  }
+  .dashboard-header {
+    gap: 12px;
+  }
+}
+
+/* Tables: horizontal scroll on small screens */
+@media (max-width: 768px) {
+  .data-table,
+  .attendance-table,
+  .result-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Home hero text and menu dropdown */
+@media (max-width: 768px) {
+  .navbar ul {
+    width: min(92vw, 360px) !important;
+    right: 12px !important;
+  }
+}
+@media (max-width: 576px) {
+  .hero-content h1 {
+    font-size: 1.4rem !important;
+  }
+  .hero-content p {
+    font-size: 0.95rem !important;
+  }
+  .btn {
+    padding: 10px 16px;
+  }
+}
+
+/* Prevent iOS zoom by ensuring 16px inputs */
+@media (max-width: 576px) {
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 16px;
+  }
+}
+
