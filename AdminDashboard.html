@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Faith-Life College Admin</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+      :root {
+        --primary: #4361ee;
+        --primary-dark: #3a56d4;
+        --secondary: #3f37c9;
+        --success: #4cc9f0;
+        --danger: #f72585;
+        --warning: #f8961e;
+        --info: #4895ef;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --gray: #6c757d;
+        --light-gray: #e9ecef;
+        --dark-gray: #495057;
+        --white: #ffffff;
+        --sidebar-bg: #e9ecef;
+        --card-bg: #ffffff;
+        --card-border: #dee2e6;
+        --card-hover: #f1f3f5;
+        --text-dark: #212529;
+        --text-muted: #6c757d;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f0f2f5;
+        color: var(--text-dark);
+        min-height: 100vh;
+        display: flex;
+      }
+
+      body::before {
+        content: none;
+      }
+
+      .sidebar {
+        width: 280px;
+        background: var(--sidebar-bg);
+        height: 100vh;
+        position: fixed;
+        overflow-y: auto;
+        transition: all 0.3s ease;
+        z-index: 100;
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .sidebar-header {
+        padding: 25px 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .school-logo {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border: 3px solid var(--primary);
+        box-shadow: 0 0 20px rgba(67, 97, 238, 0.5);
+      }
+
+      .school-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        background: linear-gradient(45deg, var(--primary), var(--info));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .academic-term {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+
+      .menu-title {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        letter-spacing: 1px;
+      }
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 14px 20px;
+        color: var(--text-dark);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+      }
+
+      .menu-item:hover,
+      .menu-item.active {
+        background: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+        border-left: 3px solid var(--primary);
+      }
+
+      .menu-item i {
+        width: 25px;
+        margin-right: 12px;
+        font-size: 1.1rem;
+      }
+
+      .menu-item span {
+        flex: 1;
+      }
+
+      .menu-badge {
+        background: var(--primary);
+        color: var(--white);
+        border-radius: 20px;
+        padding: 3px 8px;
+        font-size: 0.75rem;
+        min-width: 25px;
+        text-align: center;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        margin-left: 280px;
+        padding: 30px;
+      }
+
+      .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .page-title h1 {
+        font-size: 2.2rem;
+        margin-bottom: 5px;
+        background: linear-gradient(45deg, var(--warning), var(--danger));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .page-title p {
+        color: var(--text-muted);
+        max-width: 600px;
+        line-height: 1.6;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--primary);
+      }
+
+      .user-details h3 {
+        font-size: 1.1rem;
+        margin-bottom: 3px;
+      }
+
+      .user-details p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .notification-btn {
+        background: rgba(67, 97, 238, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        color: var(--primary);
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .notification-btn:hover {
+        background: rgba(67, 97, 238, 0.2);
+        transform: translateY(-3px);
+      }
+
+      .notification-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: var(--danger);
+        color: var(--white);
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+
+      /* Dashboard Grid */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
+      .dashboard-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 25px rgba(67, 97, 238, 0.1);
+        border-color: var(--primary);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .card-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+      }
+
+      .card-icon.students {
+        background: rgba(76, 201, 240, 0.2);
+        color: var(--success);
+      }
+      .card-icon.staff {
+        background: rgba(248, 150, 30, 0.2);
+        color: var(--warning);
+      }
+      .card-icon.payments {
+        background: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+      }
+      .card-icon.attendance {
+        background: rgba(155, 89, 182, 0.2);
+        color: #9b59b6;
+      }
+      .card-icon.results {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+      }
+      .card-icon.communication {
+        background: rgba(52, 152, 219, 0.2);
+        color: var(--info);
+      }
+
+      .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: var(--text-dark);
+      }
+
+      .card-count {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: linear-gradient(45deg, var(--primary), var(--info));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+      }
+
+      .card-description {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 15px;
+      }
+
+      .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid var(--card-border);
+        padding-top: 15px;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+      }
+
+      /* Charts and Stats */
+      .stats-section {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
+      .chart-container {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+      }
+
+      .chart-wrapper {
+        height: 300px;
+        position: relative;
+      }
+
+      .quick-stats {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .stat-item {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 15px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .stat-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+      }
+
+      .stat-icon.blue {
+        background: rgba(52, 152, 219, 0.2);
+        color: var(--info);
+      }
+      .stat-icon.green {
+        background: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+      }
+      .stat-icon.purple {
+        background: rgba(155, 89, 182, 0.2);
+        color: #9b59b6;
+      }
+
+      .stat-info h4 {
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+      }
+
+      .stat-info p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* Recent Activity */
+      .activity-container {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .activity-list {
+        max-height: 400px;
+        overflow-y: auto;
+        padding-right: 10px;
+      }
+
+      .activity-item {
+        display: flex;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--card-border);
+      }
+
+      .activity-item:last-child {
+        border-bottom: none;
+      }
+
+      .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        flex-shrink: 0;
+      }
+
+      .activity-icon.student {
+        background: rgba(76, 201, 240, 0.2);
+        color: var(--success);
+      }
+      .activity-icon.payment {
+        background: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+      }
+      .activity-icon.staff {
+        background: rgba(248, 150, 30, 0.2);
+        color: var(--warning);
+      }
+      .activity-icon.system {
+        background: rgba(155, 89, 182, 0.2);
+        color: #9b59b6;
+      }
+
+      .activity-content {
+        flex: 1;
+      }
+
+      .activity-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .activity-time {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 5px;
+      }
+
+      /* New styles for tables */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+      .data-table th,
+      .data-table td {
+        text-align: left;
+        padding: 15px;
+        border-bottom: 1px solid var(--light-gray);
+      }
+      .data-table th {
+        background-color: var(--primary);
+        color: var(--white);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+      }
+      .data-table td {
+        background-color: #fcfcfc; /* A subtle off-white color */
+      }
+      .data-table tr:hover td {
+        background-color: var(--card-hover);
+      }
+
+      .list-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        background: linear-gradient(45deg, var(--primary), var(--info));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .search-container {
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .search-container input {
+        width: 100%;
+        padding: 15px 40px 15px 20px;
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background-color: var(--white);
+      }
+
+      .search-container input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+      }
+
+      .search-container .search-icon {
+        position: absolute;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 1.2rem;
+      }
+
+      /* Responsive */
+      @media (max-width: 1200px) {
+        .stats-section {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 992px) {
+        .sidebar {
+          width: 80px;
+        }
+
+        .sidebar .school-name,
+        .sidebar .academic-term,
+        .sidebar .menu-title,
+        .sidebar .menu-item span,
+        .sidebar .menu-badge {
+          display: none;
+        }
+
+        .sidebar .menu-item {
+          justify-content: center;
+          padding: 20px 0;
+        }
+
+        .sidebar .menu-item i {
+          margin-right: 0;
+          font-size: 1.4rem;
+        }
+
+        .main-content {
+          margin-left: 80px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .dashboard-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .user-info {
+          margin-top: 10px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .main-content {
+          padding: 20px 15px;
+        }
+
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <img
+          id="school-logo"
+          class="school-logo"
+          src="logo.jpg"
+          alt="School Logo"
+        />
+        <div class="school-name">Faith-Life International</div>
+        <div class="academic-term" id="academic-term">
+          2025/2026 - Second Term
+        </div>
+      </div>
+
+      <div class="sidebar-menu">
+        <div class="menu-title">Main Navigation</div>
+        <a href="#" class="menu-item active" id="dashboard-link">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <div class="menu-title"></div>
+        <a href="#" class="menu-item" id="students-link">
+          <i class="fas fa-user-graduate"></i>
+          <span>Students</span>
+          <span class="menu-badge" id="student-count">70</span>
+        </a>
+        <a href="#" class="menu-item" id="teachers-link">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span>Teachers</span>
+          <span class="menu-badge" id="teacher-count">50</span>
+        </a>
+
+        <div class="menu-title">Management</div>
+        <a href="#" class="menu-item" id="parents-link">
+          <i class="fas fa-user-check"></i>
+          <span>Parents</span>
+        </a>
+        <a href="#" class="menu-item" id="classes-link">
+          <i class="fas fa-book-open"></i>
+          <span>Classes</span>
+          <span class="menu-badge" id="classes-count">0</span>
+        </a>
+        <a href="#" class="menu-item">
+          <i class="fas fa-file-alt"></i>
+          <span>Registration Report</span>
+        </a>
+        <div class="menu-title">System</div>
+        <a href="#" class="menu-item">
+          <i class="fas fa-sun"></i>
+          <span>Seasons</span>
+        </a>
+        <a href="#" class="menu-item">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="main-content" id="main-content-area">
+      <div class="dashboard-header">
+        <div class="page-title">
+          <h1>Admin Dashboard</h1>
+          <p>
+            Welcome to Faith-Life International management system. Monitor
+            school activities at a glance.
+          </p>
+        </div>
+
+        <div class="user-actions">
+          <div class="user-info">
+            <img
+              id="admin-avatar"
+              class="user-avatar"
+              src="lecturer.jpg"
+              alt="Admin-pic"
+            />
+            <div class="user-details">
+              <h3 id="admin-name">Mr.Gbemidebe</h3>
+              <p id="admin-role">Principal</p>
+            </div>
+          </div>
+
+          <div class="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">3</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-card" id="students-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Students</div>
+              <div class="card-count" id="students-count">70</div>
+            </div>
+            <div class="card-icon students">
+              <i class="fas fa-user-graduate"></i>
+            </div>
+          </div>
+          <div class="card-description">
+            Total registered students in the school system
+          </div>
+          <div class="card-footer">
+            <span>Last registered: <span id="last-student">-</span></span>
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
+
+        <div class="dashboard-card" id="staff-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Staff</div>
+              <div class="card-count" id="staff-card-count">100</div>
+            </div>
+            <div class="card-icon staff">
+              <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+          </div>
+          <div class="card-description">
+            Teaching and non-teaching staff members
+          </div>
+          <div class="card-footer">
+            <span>Last added: <span id="last-staff">-</span></span>
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
+
+        <div class="dashboard-card" id="payments-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Payments</div>
+              <div class="card-count" id="payments-amount">₦0</div>
+            </div>
+            <div class="card-icon payments">
+              <i class="fas fa-credit-card"></i>
+            </div>
+          </div>
+          <div class="card-description">Total verified payments this term</div>
+          <div class="card-footer">
+            <span>Pending: <span id="pending-payments">0</span></span>
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
+
+        <div class="dashboard-card" id="attendance-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Attendance</div>
+              <div class="card-count" id="attendance-percent">50%</div>
+            </div>
+            <div class="card-icon attendance">
+              <i class="fas fa-clipboard-list"></i>
+            </div>
+          </div>
+          <div class="card-description">
+            Average student attendance rate today
+          </div>
+          <div class="card-footer">
+            <span>Absent: <span id="absent-today">10</span> students</span>
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
+
+        <div class="dashboard-card" id="results-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Results</div>
+              <div class="card-count" id="results-count">10</div>
+            </div>
+            <div class="card-icon results">
+              <i class="fas fa-chart-line"></i>
+            </div>
+          </div>
+          <div class="card-description">Results recorded this term</div>
+          <div class="card-footer">
+            <span>Pending: <span id="pending-results">10</span></span>
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
+
+        <div class="dashboard-card" id="communication-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Messages</div>
+              <div class="card-count" id="messages-count">3</div>
+            </div>
+            <div class="card-icon communication">
+              <i class="fas fa-comments"></i>
+            </div>
+          </div>
+          <div class="card-description">Unread messages and announcements</div>
+          <div class="card-footer">
+            <span>Unread: <span id="unread-messages">0</span></span>
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <div class="chart-container">
+          <div class="section-header"></div>
+          <div class="chart-wrapper">
+            <canvas id="paymentsChart"></canvas>
+          </div>
+        </div>
+
+        <div class="quick-stats">
+          <div class="stat-item">
+            <div class="stat-icon blue">
+              <i class="fas fa-book"></i>
+            </div>
+            <div class="stat-info">
+              <h4 id="subject-stats">30 Subjects</h4>
+              <p>Active in curriculum</p>
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-icon green">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+              <h4 id="class-stats">20 Classes</h4>
+              <p>Currently active</p>
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-icon purple">
+              <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-info">
+              <h4 id="assignment-stats">5 Assignments</h4>
+              <p>Submitted this week</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="AdminDashboard.js"></script>
+  </body>
+</html>

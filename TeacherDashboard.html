@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Faith-Life College Teacher Portal</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      :root {
+        --primary: #4361ee;
+        --primary-dark: #3a56d4;
+        --secondary: #3f37c9;
+        --success: #4cc9f0;
+        --danger: #f72585;
+        --warning: #f8961e;
+        --info: #4895ef;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --gray: #6c757d;
+        --light-gray: #e9ecef;
+        --dark-gray: #495057;
+        --white: #ffffff;
+        --sidebar-bg: #e9ecef;
+        --card-bg: #ffffff;
+        --card-border: #dee2e6;
+        --card-hover: #f1f3f5;
+        --text-dark: #212529;
+        --text-muted: #6c757d;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f0f2f5;
+        color: var(--text-dark);
+        min-height: 100vh;
+        display: flex;
+      }
+
+      .sidebar {
+        width: 280px;
+        background: var(--sidebar-bg);
+        height: 100vh;
+        position: fixed;
+        overflow-y: auto;
+        transition: all 0.3s ease;
+        z-index: 100;
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .sidebar-header {
+        padding: 25px 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .school-logo {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border: 3px solid var(--primary);
+        box-shadow: 0 0 20px rgba(67, 97, 238, 0.5);
+      }
+
+      .school-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        background: linear-gradient(45deg, var(--primary), var(--info));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .academic-term {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+
+      .menu-title {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        letter-spacing: 1px;
+      }
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 14px 20px;
+        color: var(--text-dark);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+        cursor: pointer;
+      }
+
+      .menu-item:hover,
+      .menu-item.active {
+        background: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+        border-left: 3px solid var(--primary);
+      }
+
+      .menu-item i {
+        width: 25px;
+        margin-right: 12px;
+        font-size: 1.1rem;
+      }
+
+      .menu-item span {
+        flex: 1;
+      }
+
+      .menu-badge {
+        background: var(--primary);
+        color: var(--white);
+        border-radius: 20px;
+        padding: 3px 8px;
+        font-size: 0.75rem;
+        min-width: 25px;
+        text-align: center;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        margin-left: 280px;
+        padding: 30px;
+        transition: margin-left 0.3s ease;
+      }
+
+      .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .page-title h1 {
+        font-size: 2.2rem;
+        margin-bottom: 5px;
+        background: linear-gradient(45deg, var(--warning), var(--danger));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .page-title p {
+        color: var(--text-muted);
+        max-width: 600px;
+        line-height: 1.6;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--primary);
+      }
+
+      .user-details h3 {
+        font-size: 1.1rem;
+        margin-bottom: 3px;
+      }
+
+      .user-details p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .notification-btn {
+        background: rgba(67, 97, 238, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        color: var(--primary);
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .notification-btn:hover {
+        background: rgba(67, 97, 238, 0.2);
+        transform: translateY(-3px);
+      }
+
+      .notification-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: var(--danger);
+        color: var(--white);
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+
+      /* Dashboard Grid */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
+      .dashboard-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 25px rgba(67, 97, 238, 0.1);
+        border-color: var(--primary);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .card-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+      }
+
+      .card-icon.students {
+        background: rgba(76, 201, 240, 0.2);
+        color: var(--success);
+      }
+      .card-icon.parents {
+        background: rgba(248, 150, 30, 0.2);
+        color: var(--warning);
+      }
+      .card-icon.results {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+      }
+      .card-icon.communication {
+        background: rgba(52, 152, 219, 0.2);
+        color: var(--info);
+      }
+      .card-icon.upload {
+        background: rgba(155, 89, 182, 0.2);
+        color: #9b59b6;
+      }
+      .card-icon.attendance {
+        background: rgba(108, 117, 125, 0.2);
+        color: var(--gray);
+      }
+
+      .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: var(--text-dark);
+      }
+
+      .card-count {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: linear-gradient(45deg, var(--primary), var(--info));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+      }
+
+      .card-description {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 15px;
+      }
+
+      .content-section {
+        display: none;
+        padding: 20px;
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .content-section.active {
+        display: block;
+      }
+
+      .section-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 20px;
+      }
+
+      .section-body {
+        min-height: 400px;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid var(--card-border);
+        background: var(--light);
+        transition: all 0.2s ease;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+      }
+
+      .btn {
+        padding: 12px 25px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: var(--white);
+        border: none;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-dark);
+      }
+
+      .btn-secondary {
+        background: var(--gray);
+        color: var(--white);
+        border: none;
+      }
+
+      .btn-secondary:hover {
+        background: var(--dark-gray);
+      }
+
+      .loading-message {
+        text-align: center;
+        font-style: italic;
+        color: var(--text-muted);
+      }
+
+      .data-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .list-item {
+        background: var(--card-hover);
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid var(--card-border);
+      }
+
+      /* New styles for search bar */
+      .search-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .search-container input {
+        flex: 1;
+      }
+
+      .search-container .btn {
+        flex-shrink: 0;
+      }
+      /* New styles for dynamic form */
+      .course-entry {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 10px;
+        align-items: flex-end;
+        margin-bottom: 10px;
+      }
+      .course-entry .form-group {
+        margin-bottom: 0;
+      }
+      /* Attendance table */
+      .attendance-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      .attendance-table th,
+      .attendance-table td {
+        padding: 12px;
+        border: 1px solid var(--card-border);
+        text-align: left;
+      }
+      .attendance-table th {
+        background-color: var(--light-gray);
+        font-weight: 600;
+      }
+      .attendance-table tbody tr:nth-child(even) {
+        background-color: var(--light);
+      }
+      .attendance-table tbody tr:hover {
+        background-color: var(--card-hover);
+      }
+      .attendance-status {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      .status-indicator.present {
+        background-color: #28a745;
+      }
+      .status-indicator.absent {
+        background-color: #dc3545;
+      }
+      .status-indicator.late {
+        background-color: #ffc107;
+      }
+      .status-present {
+        color: #28a745;
+        font-weight: bold;
+      }
+      .status-absent {
+        color: #dc3545;
+        font-weight: bold;
+      }
+      .status-late {
+        color: #ffc107;
+        font-weight: bold;
+      }
+      /* New styles for statistics */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+      }
+      .stat-card {
+        background: var(--light);
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        border: 1px solid var(--card-border);
+      }
+      .stat-card h4 {
+        margin-bottom: 5px;
+        font-size: 1rem;
+        color: var(--text-muted);
+      }
+      .stat-card p {
+        font-size: 1.8rem;
+        font-weight: 700;
+      }
+      .stat-present p {
+        color: #28a745;
+      }
+      .stat-absent p {
+        color: #dc3545;
+      }
+      .stat-late p {
+        color: #ffc107;
+      }
+
+      /* Attendance Chart Styling */
+      .chart-container {
+        margin-top: 30px;
+        padding: 20px;
+        background-color: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .chart-container h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 20px;
+      }
+      #attendance-pie-chart {
+        max-width: 400px;
+        max-height: 400px;
+      }
+
+      /* Dropdown styles for student name */
+      .custom-dropdown {
+        position: relative;
+      }
+
+      .custom-dropdown-input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid var(--card-border);
+        background: var(--light);
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .custom-dropdown-content {
+        display: none;
+        position: absolute;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        background-color: var(--white);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+        top: calc(100% + 5px);
+      }
+
+      .custom-dropdown-content.show {
+        display: block;
+      }
+
+      .custom-dropdown-list-item {
+        padding: 12px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+
+      .custom-dropdown-list-item:hover {
+        background-color: var(--light-gray);
+      }
+
+      /* Responsive */
+      @media (max-width: 992px) {
+        .sidebar {
+          width: 80px;
+        }
+        .sidebar .school-name,
+        .sidebar .academic-term,
+        .sidebar .menu-title,
+        .sidebar .menu-item span,
+        .sidebar .menu-badge {
+          display: none;
+        }
+        .sidebar .menu-item {
+          justify-content: center;
+          padding: 20px 0;
+        }
+        .sidebar .menu-item i {
+          margin-right: 0;
+          font-size: 1.4rem;
+        }
+        .main-content {
+          margin-left: 80px;
+        }
+      }
+      @media (max-width: 768px) {
+        .dashboard-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .user-info {
+          margin-top: 10px;
+        }
+      }
+      @media (max-width: 576px) {
+        .main-content {
+          padding: 20px 15px;
+        }
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+        .course-entry {
+          grid-template-columns: 1fr;
+        }
+        .search-container {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <img class="school-logo" src="logo.jpg" alt="School Logo" />
+        <div class="school-name">Faith-Life International</div>
+        <div class="academic-term">Teacher Portal</div>
+      </div>
+
+      <div class="sidebar-menu">
+        <div class="menu-title">Main Navigation</div>
+        <a href="#dashboard" class="menu-item active" data-section="dashboard">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#students" class="menu-item" data-section="students">
+          <i class="fas fa-user-graduate"></i>
+          <span>Students</span>
+        </a>
+        <a href="#parents" class="menu-item" data-section="parents">
+          <i class="fas fa-user-check"></i>
+          <span>Parents</span>
+        </a>
+        <a href="#attendance" class="menu-item" data-section="attendance">
+          <i class="fas fa-check-circle"></i>
+          <span>Attendance</span>
+        </a>
+        <a href="#results" class="menu-item" data-section="results">
+          <i class="fas fa-poll"></i>
+          <span>Results</span>
+        </a>
+        <a
+          href="#upload-results"
+          class="menu-item"
+          data-section="upload-results"
+        >
+          <i class="fas fa-upload"></i>
+          <span>Upload Results</span>
+        </a>
+        <a href="#message-admin" class="menu-item" data-section="message-admin">
+          <i class="fas fa-comments"></i>
+          <span>Message Admin</span>
+        </a>
+        <a href="#logout" class="menu-item" data-section="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="dashboard-header">
+        <div class="page-title">
+          <h1 id="page-heading">Teacher Dashboard</h1>
+          <p id="page-subheading">
+            Welcome to your personalized portal. Manage your students and school
+            activities at a glance. Your User ID is:
+            <span
+              id="user-id"
+              class="font-mono text-sm px-2 py-1 rounded-md bg-gray-200"
+              >Loading...</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <div id="dashboard" class="content-section active">
+        <div class="dashboard-grid">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">My Students</div>
+                <div class="card-count">70</div>
+              </div>
+              <div class="card-icon students">
+                <i class="fas fa-user-graduate"></i>
+              </div>
+            </div>
+            <div class="card-description">
+              Total students assigned to your classes.
+            </div>
+          </div>
+          <div class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Uploaded Results</div>
+                <div class="card-count">250</div>
+              </div>
+              <div class="card-icon results">
+                <i class="fas fa-poll"></i>
+              </div>
+            </div>
+            <div class="card-description">
+              Student results you have submitted this term.
+            </div>
+          </div>
+          <div class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Attendance Recorded</div>
+                <div class="card-count">12</div>
+              </div>
+              <div class="card-icon attendance">
+                <i class="fas fa-check-circle"></i>
+              </div>
+            </div>
+            <div class="card-description">
+              Attendance records you have submitted this month.
+            </div>
+          </div>
+          <div class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Unread Messages</div>
+                <div class="card-count">3</div>
+              </div>
+              <div class="card-icon communication">
+                <i class="fas fa-comments"></i>
+              </div>
+            </div>
+            <div class="card-description">
+              Unread messages from the admin or parents.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="students" class="content-section">
+        <h2 class="section-title">My Students</h2>
+        <div class="section-body">
+          <p>
+            This section would list all the students you are assigned to. It
+            could include their name, class, and a link to their profile.
+          </p>
+          <div class="search-container">
+            <input
+              type="text"
+              id="student-search"
+              placeholder="Search for a student..."
+            />
+            <button class="btn btn-primary" onclick="filterStudents()">
+              <i class="fas fa-search"></i>
+              Search
+            </button>
+          </div>
+          <div class="data-list mt-6" id="student-list">
+            <div class="list-item">
+              <h3 class="font-bold text-lg student-name">
+                John Doe
+                <span class="text-sm font-normal text-gray-500"
+                  >- Class SS1A</span
+                >
+              </h3>
+              <p>Contact: +234 800 123 4567</p>
+            </div>
+            <div class="list-item">
+              <h3 class="font-bold text-lg student-name">
+                Jane Smith
+                <span class="text-sm font-normal text-gray-500"
+                  >- Class JSS2B</span
+                >
+              </h3>
+              <p>Contact: +234 800 123 4568</p>
+            </div>
+            <div class="list-item">
+              <h3 class="font-bold text-lg student-name">
+                Peter Jones
+                <span class="text-sm font-normal text-gray-500"
+                  >- Class SS1A</span
+                >
+              </h3>
+              <p>Contact: +234 800 123 4569</p>
+            </div>
+            <div class="list-item">
+              <h3 class="font-bold text-lg student-name">
+                Mary Williams
+                <span class="text-sm font-normal text-gray-500"
+                  >- Class JSS2B</span
+                >
+              </h3>
+              <p>Contact: +234 800 123 4570</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="parents" class="content-section">
+        <h2 class="section-title">Parents</h2>
+        <div class="section-body">
+          <p>
+            This section would show the parents of the students in your classes.
+            You could easily contact them here.
+          </p>
+          <div class="data-list mt-6">
+            <div class="list-item">
+              <h3 class="font-bold text-lg">
+                Mr. & Mrs. Doe
+                <span class="text-sm font-normal text-gray-500"
+                  >- Parent of John Doe</span
+                >
+              </h3>
+              <p>Contact: +234 800 123 4569</p>
+            </div>
+            <div class="list-item">
+              <h3 class="font-bold text-lg">
+                Mr. Smith
+                <span class="text-sm font-normal text-gray-500"
+                  >- Parent of Jane Smith</span
+                >
+              </h3>
+              <p>Contact: +234 800 123 4570</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="attendance" class="content-section">
+        <h2 class="section-title">Record Daily Attendance</h2>
+        <div class="section-body">
+          <form id="attendance-form">
+            <div class="form-group">
+              <label for="attendance-date">Date</label>
+              <input type="text" id="attendance-date" readonly />
+            </div>
+            <div class="form-group">
+              <label for="attendance-class">Class</label>
+              <select id="attendance-class" required>
+                <option value="">Select Class</option>
+                <option value="JSS1A">JSS1A</option>
+                <option value="JSS2B">JSS2B</option>
+                <option value="SS1A">SS1A</option>
+                <option value="SS2C">SS2C</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Student Attendance</label>
+              <div id="student-attendance-list">
+                <p class="loading-message">
+                  Please select a class to load students.
+                </p>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-full">
+              Record Attendance
+            </button>
+          </form>
+          <div id="attendance-status" class="mt-4"></div>
+
+          <hr class="my-8" />
+
+          <h3 class="text-xl font-semibold mb-4 text-primary">
+            Attendance Statistics
+          </h3>
+          <div id="attendance-statistics" class="stats-grid">
+            <p class="loading-message">
+              Select a class to view attendance statistics.
+            </p>
+          </div>
+
+          <div id="attendance-chart-container" class="chart-container">
+            <h3 id="chart-title">Attendance Overview</h3>
+            <canvas id="attendance-pie-chart"></canvas>
+          </div>
+
+          <h3 class="text-xl font-semibold mt-8 mb-4 text-primary">
+            Recent Attendance Records:
+          </h3>
+          <div id="recent-attendance-list" class="data-list">
+            <p class="loading-message">Loading recent records...</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="results" class="content-section">
+        <h2 class="section-title">Results</h2>
+        <div class="section-body">
+          <p>This section displays student results you have uploaded.</p>
+          <div id="uploaded-results-list" class="data-list mt-6">
+            <p class="loading-message">Loading recent results...</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="upload-results" class="content-section">
+        <h2 class="section-title">Upload Results</h2>
+        <div class="section-body">
+          <form id="upload-results-form">
+            <div class="form-group">
+              <label for="student-dropdown-input">Student Name</label>
+              <div class="custom-dropdown">
+                <input
+                  type="text"
+                  id="student-dropdown-input"
+                  class="custom-dropdown-input"
+                  placeholder="Search for a student..."
+                  readonly
+                  required
+                />
+                <div
+                  class="custom-dropdown-content"
+                  id="student-dropdown-list"
+                ></div>
+              </div>
+              <input type="hidden" id="student-name" />
+            </div>
+
+            <div class="form-group">
+              <label for="position-in-class">Position in Class</label>
+              <input
+                type="number"
+                id="position-in-class"
+                placeholder="e.g., 1, 2, 3..."
+                required
+              />
+            </div>
+            <div id="course-list-container"></div>
+
+            <button
+              type="button"
+              id="add-course-btn"
+              class="btn btn-secondary w-full"
+            >
+              Add Course
+            </button>
+            <br />
+            <br />
+            <div class="form-group">
+              <label for="hardcopy-upload">Upload Hardcopy Result</label>
+              <input
+                type="file"
+                id="hardcopy-upload"
+                accept=".pdf,.jpg,.jpeg,.png"
+                required
+              />
+            </div>
+            <button type="submit" class="btn btn-primary w-full">
+              Upload Results
+            </button>
+          </form>
+          <div id="upload-status" class="mt-4"></div>
+        </div>
+      </div>
+
+      <div id="message-admin" class="content-section">
+        <h2 class="section-title">Message Admin</h2>
+        <div class="section-body">
+          <form id="message-admin-form">
+            <div class="form-group">
+              <label for="admin-message">Your Message</label>
+              <textarea id="admin-message" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-full">
+              Send Message
+            </button>
+          </form>
+          <div id="message-status" class="mt-4"></div>
+
+          <h3 class="text-xl font-semibold mt-8 mb-4 text-primary">
+            Recent Messages:
+          </h3>
+          <div id="message-list" class="data-list">
+            <p class="loading-message">Loading recent messages...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="teacherDashboard.js"></script>
+  </body>
+</html>

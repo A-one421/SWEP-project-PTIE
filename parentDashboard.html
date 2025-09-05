@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FaithLife College Parent Portal</title>
+    <!-- The link to the tailwind css from the cdn 😍-->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #4361ee;
+        --primary-dark: #3a56d4;
+        --secondary: #3f37c9;
+        --success: #4cc9f0;
+        --danger: #f72585;
+        --warning: #f8961e;
+        --info: #4895ef;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --gray: #6c757d;
+        --light-gray: #e9ecef;
+        --dark-gray: #495057;
+        --white: #ffffff;
+        --sidebar-bg: #e9ecef;
+        --card-bg: #ffffff;
+        --card-border: #dee2e6;
+        --card-hover: #f1f3f5;
+        --text-dark: #212529;
+        --text-muted: #6c757d;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f0f2f5;
+        color: var(--text-dark);
+        min-height: 100vh;
+        display: flex;
+      }
+
+      .sidebar {
+        width: 280px;
+        background: var(--sidebar-bg);
+        height: 100vh;
+        position: fixed;
+        overflow-y: auto;
+        transition: all 0.3s ease;
+        z-index: 100;
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .sidebar-header {
+        padding: 25px 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .school-logo {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border: 3px solid var(--primary);
+        box-shadow: 0 0 20px rgba(67, 97, 238, 0.5);
+      }
+
+      .school-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        background: linear-gradient(45deg, var(--primary), var(--info));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .academic-term {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+
+      .menu-title {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        letter-spacing: 1px;
+      }
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 14px 20px;
+        color: var(--text-dark);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+        cursor: pointer;
+      }
+
+      .menu-item:hover,
+      .menu-item.active {
+        background: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+        border-left: 3px solid var(--primary);
+      }
+
+      .menu-item i {
+        width: 25px;
+        margin-right: 12px;
+        font-size: 1.1rem;
+      }
+
+      .menu-item span {
+        flex: 1;
+      }
+
+      .menu-badge {
+        background: var(--primary);
+        color: var(--white);
+        border-radius: 20px;
+        padding: 3px 8px;
+        font-size: 0.75rem;
+        min-width: 25px;
+        text-align: center;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        margin-left: 280px;
+        padding: 30px;
+        transition: margin-left 0.3s ease;
+      }
+
+      .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .page-title h1 {
+        font-size: 2.2rem;
+        margin-bottom: 5px;
+        background: linear-gradient(45deg, var(--warning), var(--danger));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .page-title p {
+        color: var(--text-muted);
+        max-width: 600px;
+        line-height: 1.6;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--primary);
+      }
+
+      .user-details h3 {
+        font-size: 1.1rem;
+        margin-bottom: 3px;
+      }
+
+      .user-details p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .notification-btn {
+        background: rgba(67, 97, 238, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        color: var(--primary);
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .notification-btn:hover {
+        background: rgba(67, 97, 238, 0.2);
+        transform: translateY(-3px);
+      }
+
+      .notification-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: var(--danger);
+        color: var(--white);
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+
+      /* Dashboard Grid */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
+      .dashboard-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 25px rgba(67, 97, 238, 0.1);
+        border-color: var(--primary);
+      }
+
+      .child-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .child-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 2px solid var(--primary);
+        object-fit: cover;
+      }
+
+      .child-details h3 {
+        font-size: 1.5rem;
+        color: var(--primary);
+        margin-bottom: 5px;
+      }
+
+      .child-details p {
+        color: var(--text-muted);
+        line-height: 1.5;
+        font-size: 0.95rem;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .card-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+      }
+
+      .card-icon.children {
+        background: rgba(76, 201, 240, 0.2);
+        color: var(--success);
+      }
+      .card-icon.messages {
+        background: rgba(248, 150, 30, 0.2);
+        color: var(--warning);
+      }
+
+      .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: var(--text-dark);
+      }
+
+      .card-count {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: linear-gradient(45deg, var(--primary), var(--info));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+      }
+
+      .card-description {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 15px;
+      }
+
+      .content-section {
+        display: none;
+        padding: 20px;
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .content-section.active {
+        display: block;
+      }
+      /* Plane background for result section, Wahala css por oo😭 */
+      #results.content-section {
+        background: url("https://www.transparenttextures.com/patterns/pinstripe-paper.png")
+          var(--card-bg);
+        background-blend-mode: multiply;
+      }
+      .section-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 20px;
+      }
+
+      .section-body {
+        min-height: 400px;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid var(--card-border);
+        background: var(--light);
+        transition: all 0.2s ease;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+      }
+
+      .btn {
+        padding: 12px 25px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: var(--white);
+        border: none;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-dark);
+      }
+      .btn-download {
+        background: var(--success);
+        color: var(--white);
+        border: none;
+      }
+
+      .btn-download:hover {
+        background: rgba(76, 201, 240, 0.8);
+      }
+      .loading-message {
+        text-align: center;
+        font-style: italic;
+        color: var(--text-muted);
+      }
+
+      .data-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .list-item {
+        background: var(--card-hover);
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid var(--card-border);
+      }
+
+      .profile-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        text-align: center;
+      }
+
+      .profile-image-container {
+        position: relative;
+        width: 150px;
+        height: 150px;
+      }
+
+      .profile-image-container img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--primary);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .profile-info h3 {
+        font-size: 1.8rem;
+        font-weight: 600;
+      }
+
+      .change-pic-btn {
+        padding: 8px 15px;
+        border: 1px solid var(--card-border);
+        background: var(--light-gray);
+        border-radius: 20px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .change-pic-btn:hover {
+        background: var(--gray);
+        color: var(--white);
+      }
+
+      .result-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: flex-end;
+        margin-bottom: 25px;
+      }
+
+      .result-controls .form-group {
+        flex: 1;
+        min-width: 150px;
+        margin-bottom: 0;
+      }
+
+      .result-card {
+        padding: 25px;
+        border-radius: 15px;
+        background: #fff;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+      }
+
+      .result-header {
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 2px solid var(--primary);
+        padding-bottom: 15px;
+      }
+
+      .result-header h4 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: var(--primary-dark);
+      }
+
+      .result-header p {
+        margin: 5px 0 0;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .result-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .result-table th,
+      .result-table td {
+        padding: 12px 15px;
+        border: 1px solid var(--card-border);
+        text-align: left;
+      }
+
+      .result-table th {
+        background-color: var(--light-gray);
+        font-weight: 600;
+      }
+      .result-table tbody tr:nth-child(even) {
+        background-color: var(--card-hover);
+      }
+      .result-table td:last-child {
+        font-weight: 700;
+      }
+
+      .result-summary {
+        margin-top: 20px;
+        font-weight: 600;
+        text-align: right;
+      }
+      .download-btn-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+      }
+      /* Responsiveness*/
+      @media (max-width: 992px) {
+        .sidebar {
+          width: 80px;
+        }
+        .sidebar .school-name,
+        .sidebar .academic-term,
+        .sidebar .menu-title,
+        .sidebar .menu-item span,
+        .sidebar .menu-badge {
+          display: none;
+        }
+        .sidebar .menu-item {
+          justify-content: center;
+          padding: 20px 0;
+        }
+        .sidebar .menu-item i {
+          margin-right: 0;
+          font-size: 1.4rem;
+        }
+        .main-content {
+          margin-left: 80px;
+        }
+      }
+      @media (max-width: 768px) {
+        .dashboard-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .user-info {
+          margin-top: 10px;
+        }
+      }
+      @media (max-width: 576px) {
+        .main-content {
+          padding: 20px 15px;
+        }
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+        .result-controls {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <img class="school-logo" src="logo.jpg" alt="School Logo" />
+        <div class="school-name">FaithLife International</div>
+        <div class="academic-term">Parent Portal</div>
+      </div>
+
+      <div class="sidebar-menu">
+        <div class="menu-title">Main Navigation</div>
+        <a href="#dashboard" class="menu-item active" data-section="dashboard">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#profile" class="menu-item" data-section="profile">
+          <i class="fas fa-user"></i>
+          <span>My Profile</span>
+        </a>
+        <a href="#children" class="menu-item" data-section="children">
+          <i class="fas fa-user-graduate"></i>
+          <span>My Children</span>
+        </a>
+        <a href="#results" class="menu-item" data-section="results">
+          <i class="fas fa-chart-bar"></i>
+          <span>Check Result</span>
+        </a>
+        <a
+          href="#compose-message"
+          class="menu-item"
+          data-section="compose-message"
+        >
+          <i class="fas fa-envelope"></i>
+          <span>Compose Message</span>
+        </a>
+        <a href="#logout" class="menu-item" data-section="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="dashboard-header">
+        <div class="page-title">
+          <h1 id="page-heading">Parent Dashboard</h1>
+          <p id="page-subheading">
+            Welcome to your personalized portal. You can view your children's
+            details and communicate with the school here.
+            <span
+              id="user-id"
+              class="font-mono text-sm px-2 py-1 rounded-md bg-gray-200"
+              >parent-12345</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <div id="dashboard" class="content-section active">
+        <div class="dashboard-grid" id="dashboard-grid">
+          <div class="dashboard-card profile-card">
+            <div class="profile-info">
+              <div class="profile-image-container">
+                <img
+                  id="parent-profile-pic"
+                  src="https://placehold.co/150x150/4361ee/ffffff?text=P"
+                  alt="Parent Profile Picture"
+                />
+              </div>
+              <h3>Mr. & Mrs. Adebayo</h3>
+              <button id="change-pic-btn" class="change-pic-btn">
+                Change Profile Picture
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="profile" class="content-section">
+        <h2 class="section-title">My Profile</h2>
+        <div class="section-body profile-info">
+          <p class="text-muted">
+            You can view and update your personal information here.
+          </p>
+          <div class="profile-image-container mt-6">
+            <img
+              id="profile-section-pic"
+              src="https://placehold.co/150x150/4361ee/ffffff?text=P"
+              alt="Parent Profile Picture"
+            />
+          </div>
+          <h3>Mr. & Mrs. Adebayo</h3>
+          <p class="text-muted">Parent of Segun & Funke Adebayo</p>
+          <button id="change-pic-btn-profile" class="change-pic-btn">
+            Change Profile Picture
+          </button>
+        </div>
+      </div>
+
+      <div id="children" class="content-section">
+        <h2 class="section-title">My Children</h2>
+        <div class="section-body">
+          <p>Here is a list of the children assigned to your account.</p>
+          <div class="data-list mt-6" id="children-list">
+            <p class="loading-message">Loading children's list...</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="results" class="content-section">
+        <h2 class="section-title">Check Result</h2>
+        <div class="section-body">
+          <p class="text-muted">
+            Select a child, term, and session to view their report card.
+          </p>
+          <div class="result-controls mt-6">
+            <div class="form-group">
+              <label for="child-select-results">Select Child</label>
+              <select id="child-select-results" name="child"></select>
+            </div>
+            <div class="form-group">
+              <label for="term-select">Select Term</label>
+              <select id="term-select" name="term">
+                <option value="first">First Term</option>
+                <option value="second">Second Term</option>
+                <option value="third">Third Term</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="session-select">Select Session</label>
+              <select id="session-select" name="session">
+                <option value="2024/2025">2024/2025</option>
+                <option value="2025/2026">2025/2026</option>
+              </select>
+            </div>
+          </div>
+          <div id="result-display" class="result-card">
+            <p class="loading-message">
+              Please select a child, term, and session to view the result.
+            </p>
+          </div>
+          <div class="download-btn-container">
+            <button id="download-all-btn" class="btn btn-download">
+              Download All Results (PDF)
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="compose-message" class="content-section">
+        <h2 class="section-title">Compose Complaint/Message</h2>
+        <div class="section-body">
+          <p>
+            Use this form to send a message or complaint to the school
+            administration.
+          </p>
+          <form id="compose-message-form" class="mt-6">
+            <div class="form-group">
+              <label for="child-select">Select a Child (Optional)</label>
+              <select id="child-select" name="child-select">
+                <option value="" selected disabled>Select a child</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="message-subject">Subject</label>
+              <input type="text" id="message-subject" required />
+            </div>
+            <div class="form-group">
+              <label for="parent-message">Your Message</label>
+              <textarea id="parent-message" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-full">
+              Send Message
+            </button>
+          </form>
+          <div id="message-status" class="mt-4 text-center"></div>
+        </div>
+      </div>
+    </div>
+
+    <input
+      type="file"
+      id="profile-pic-input"
+      accept="image/*"
+      style="display: none"
+    />
+
+    <script src="parentDashboard.js"></script>
+  </body>
+</html>
