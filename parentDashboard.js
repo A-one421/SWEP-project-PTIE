@@ -6,10 +6,26 @@ const contentSections = document.querySelectorAll(".content-section");
 const pageHeading = document.getElementById("page-heading");
 const pageSubheading = document.getElementById("page-subheading");
 const dashboardGrid = document.getElementById("dashboard-grid");
-const childrenList = document.getElementById("children-list");
+const studentList = document.getElementById("children-list");
 const composeMessageForm = document.getElementById("compose-message-form");
 const messageStatus = document.getElementById("message-status");
 const childSelect = document.getElementById("child-select");
+
+// Mobile sidebar toggle support
+const body = document.body;
+const menuToggleBtn = document.getElementById("menu-toggle");
+const sidebarOverlay = document.getElementById("sidebar-overlay");
+if (menuToggleBtn) {
+  menuToggleBtn.addEventListener("click", () => {
+    body.classList.toggle("sidebar-open");
+  });
+}
+if (sidebarOverlay) {
+  sidebarOverlay.addEventListener("click", () => body.classList.remove("sidebar-open"));
+}
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 992) body.classList.remove("sidebar-open");
+});
 
 // New elements for results section
 const childSelectResults = document.getElementById("child-select-results");
@@ -143,6 +159,7 @@ navLinks.forEach((link) => {
     e.preventDefault();
     const sectionId = link.getAttribute("data-section");
     navigateTo(sectionId);
+    body.classList.remove("sidebar-open");
   });
 });
 

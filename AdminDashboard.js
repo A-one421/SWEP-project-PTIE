@@ -6,6 +6,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const dashboardLink = document.getElementById("dashboard-link");
   const mainContentArea = document.getElementById("main-content-area");
 
+  // Mobile sidebar toggle support
+  const body = document.body;
+  const menuToggleBtn = document.getElementById("menu-toggle");
+  const sidebarOverlay = document.getElementById("sidebar-overlay");
+  if (menuToggleBtn) {
+    menuToggleBtn.addEventListener("click", () => {
+      body.classList.toggle("sidebar-open");
+    });
+  }
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener("click", () => body.classList.remove("sidebar-open"));
+  }
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 992) body.classList.remove("sidebar-open");
+  });
+
   // This section is for Teachers name and data
   const teachersData = [
     {
@@ -236,12 +252,14 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     setActiveLink(studentsLink);
     renderStudentsList();
+    body.classList.remove("sidebar-open");
   });
 
   parentsLink.addEventListener("click", (e) => {
     e.preventDefault();
     setActiveLink(parentsLink);
     renderParentsList();
+    body.classList.remove("sidebar-open");
   });
 
   // The rest of the original code, adapted to work with the new structure
@@ -449,11 +467,13 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     setActiveLink(dashboardLink);
     renderDashboard();
+    body.classList.remove("sidebar-open");
   });
 
   teachersLink.addEventListener("click", (e) => {
     e.preventDefault();
     setActiveLink(teachersLink);
+    body.classList.remove("sidebar-open");
     mainContentArea.innerHTML = `
           <h2 class="list-title">Teachers Directory</h2>
           <div class="search-container">
@@ -504,6 +524,7 @@ document.addEventListener("DOMContentLoaded", () => {
   classesLink.addEventListener("click", (e) => {
     e.preventDefault();
     setActiveLink(classesLink);
+    body.classList.remove("sidebar-open");
     mainContentArea.innerHTML = `
           <h2 class="list-title">Class and Subject Management</h2>
           <div class="search-container">

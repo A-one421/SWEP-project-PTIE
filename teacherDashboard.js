@@ -15,6 +15,22 @@ const courseListContainer = document.getElementById("course-list-container");
 const studentSearchInput = document.getElementById("student-search");
 const studentList = document.getElementById("student-list");
 
+// Mobile sidebar toggle support
+const body = document.body;
+const menuToggleBtn = document.getElementById("menu-toggle");
+const sidebarOverlay = document.getElementById("sidebar-overlay");
+if (menuToggleBtn) {
+  menuToggleBtn.addEventListener("click", () => {
+    body.classList.toggle("sidebar-open");
+  });
+}
+if (sidebarOverlay) {
+  sidebarOverlay.addEventListener("click", () => body.classList.remove("sidebar-open"));
+}
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 992) body.classList.remove("sidebar-open");
+});
+
 // New Attendance DOM elements
 const attendanceForm = document.getElementById("attendance-form");
 const attendanceDateInput = document.getElementById("attendance-date");
@@ -127,6 +143,7 @@ navLinks.forEach((link) => {
     e.preventDefault();
     const sectionId = link.getAttribute("data-section");
     navigateTo(sectionId);
+    body.classList.remove("sidebar-open");
   });
 });
 
